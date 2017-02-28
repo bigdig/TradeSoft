@@ -1,7 +1,13 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
 import wx
-from CandlePanel import CandlePanel
+import sys
+sys.path.append('../')
+
+from view.CandlePanel import CandlePanel
+from control.control import *
+
 #import ScrolledWindow
 
 #----------------------------------------------------------------------
@@ -9,8 +15,12 @@ from CandlePanel import CandlePanel
 # IDs be in a specific range. There are better ways to do that, too, but
 # this will do for purposes of this demo.
 
-ID_Menu_New         = 5004
+ID_Menu_5Min   = 5004
 ID_Menu_Exit        = 5005
+ID_Menu_Realtime    = 5006
+ID_Menu_30Min = 5007
+ID_Menu_Day = 5008
+
 
 ID_WINDOW_TOP       = 5000
 ID_WINDOW_LEFT1     = 5001
@@ -25,10 +35,14 @@ class MyParentFrame(wx.MDIParentFrame):
             self, None, -1, "MDI Parent", size=(600,400),
             style = wx.DEFAULT_FRAME_STYLE | wx.HSCROLL | wx.VSCROLL
             )
-
+        
         self.winCount = 0
         menu = wx.Menu()
-        menu.Append(ID_Menu_New, "&New Window")
+        menu.Append(ID_Menu_5Min, "&5Min Window")
+        menu.Append(ID_Menu_30Min, "&30Min Window")
+        menu.Append(ID_Menu_Day, "&Day Window")
+        menu.AppendSeparator()
+        menu.Append(ID_Menu_Realtime, "&Realtime Window")
         menu.AppendSeparator()
         menu.Append(ID_Menu_Exit, "E&xit")
 
@@ -38,7 +52,7 @@ class MyParentFrame(wx.MDIParentFrame):
 
         #self.CreateStatusBar()
 
-        self.Bind(wx.EVT_MENU, self.OnNewWindow, id=ID_Menu_New)
+        
         self.Bind(wx.EVT_MENU, self.OnExit, id=ID_Menu_Exit)
 
         self.Bind(
@@ -47,6 +61,7 @@ class MyParentFrame(wx.MDIParentFrame):
             )
 
         self.Bind(wx.EVT_SIZE, self.OnSize)
+        self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
 
 
         # Create some layout windows
@@ -68,7 +83,7 @@ class MyParentFrame(wx.MDIParentFrame):
         win.SetAlignment(wx.LAYOUT_BOTTOM)
         #win.SetBackgroundColour(wx.Colour(0, 0, 255))
         win.SetSashVisible(wx.SASH_TOP, True)
-
+        
         self.bottomWindow = win
 
 
@@ -92,11 +107,15 @@ class MyParentFrame(wx.MDIParentFrame):
         win.SetOrientation(wx.LAYOUT_VERTICAL)
         win.SetAlignment(wx.LAYOUT_LEFT)
         #win.SetBackgroundColour(wx.Colour(0, 255, 255))
+        l1 = wx.StaticText(win, -1,  "Enter Symbol", pos=(5,5))
+        self.symbol_ctrl = wx.TextCtrl(win, -1, "Enter Symbol", pos=(5, 50), size=(100, -1), style=wx.TE_PROCESS_ENTER)
         win.SetSashVisible(wx.SASH_RIGHT, True)
 
         self.leftWindow2 = win
 
 
+    def OnKeyDown(self, evt):
+        print "Main frame pressed"
     def OnSashDrag(self, event):
         if event.GetDragStatus() == wx.SASH_STATUS_OUT_OF_RANGE:
             return
@@ -127,12 +146,8 @@ class MyParentFrame(wx.MDIParentFrame):
         self.Close(True)
 
 
-    def OnNewWindow(self, evt):
-        self.winCount = self.winCount + 1
-        win = wx.MDIChildFrame(self, -1, "Child Window: %d" % self.winCount)
-        panel = CandlePanel(win)
-        #canvas = ScrolledWindow.MyCanvas(win)
-        win.Show(True)
+ 
+        
 
 
 #----------------------------------------------------------------------
@@ -141,12 +156,11 @@ if __name__ == '__main__':
     class MyApp(wx.App):
         def OnInit(self):
             wx.InitAllImageHandlers()
-            frame = MyParentFrame()
-            frame.Show(True)
-            self.SetTopWindow(frame)
+            control = Control(self)           
             return True
 
     app = MyApp(False)
+    
     app.MainLoop()
 
 

@@ -2,7 +2,10 @@
 #!/usr/bin/env python
 
 import wx
-from CandlePanel import CandlePanel
+import sys
+sys.path.append('../')
+
+from view.CandlePanel import CandlePanel
 from control.control import *
 
 #import ScrolledWindow

@@ -1,5 +1,5 @@
 import wx
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import pub
 from view.CandlePanel import *
 from view.MainWindow import *
 from view.SubWindow import MyChildFrame

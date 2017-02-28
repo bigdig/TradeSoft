@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*- 
 
 from quote import *
-from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import pub
+#from wx.lib.pubsub import Publisher as pub
 import datetime
 import threading
 import time
@@ -108,6 +109,7 @@ class QuoteDataThread(threading.Thread):
         end = datetime.datetime(today.year, today.month, today.day , 15, 01,0)
         index2 = pd.date_range(start, end, freq='MIN')
         index0 =  pd.date_range(datetime.datetime(today.year, today.month, today.day , 9,26,0), periods=1)
+        print(index0,index,index2)
         index =index0+index+index2
         return index
  
@@ -160,7 +162,7 @@ class DataManager(threading.Thread):
 
                       
     def _GetStockList(self):
-        f = codecs.open("../model/chinastock_utf.txt", 'r', 'utf-8')
+        f = codecs.open("./model/chinastock_utf.txt", 'r', 'utf-8')
         for line in f:
             sym, name = line.split(',')
             self.symbol_dict[sym] = name
